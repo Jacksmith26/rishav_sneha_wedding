@@ -65,18 +65,6 @@ entryVideo.addEventListener('error', () => {
   videoUsable = false;
   entryFallback.style.display = 'block';
 });
-entryVideo.addEventListener('loadedmetadata', () => {
-  // Once the user has tapped, real playback owns the video element --
-  // don't let this muted-preview logic touch play/mute/currentTime and
-  // risk colliding with it (a real source of iOS Safari play() hangs).
-  if (userTapped) return;
-  entryVideo.muted = true;
-  try { entryVideo.currentTime = 0.001; } catch (_) {}
-  const p = entryVideo.play();
-  if (p) p.then(() => {
-    if (!userTapped) entryVideo.pause();
-  }).catch(() => {});
-});
 entryVideo.addEventListener('ended', revealMain);
 
 function enterSite() {
