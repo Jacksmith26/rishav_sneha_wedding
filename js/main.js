@@ -23,6 +23,7 @@ let audioPlaying = false;
 let mainRevealed = false;
 let userTapped = false;
 let videoUsable = true;
+let playbackStarted = false;
 
 document.body.style.overflow = 'hidden';
 
@@ -40,11 +41,16 @@ function revealMain() {
 
 async function startEntryPlayback() {
   if (!videoUsable) { revealMain(); return; }
+  if (playbackStarted) return;
+  playbackStarted = true;
   try {
     entryVideo.currentTime = 0;
     entryVideo.muted = false;
     await entryVideo.play();
     try { await bgAudio.play(); audioPlaying = true; updateAudioIcon(); } catch (_) {}
+    // Safety net: if `ended` doesn't fire for any reason, don't leave the visitor stuck.
+    const failSafeMs = (isFinite(entryVideo.duration) ? entryVideo.duration * 1000 : 8000) + 4000;
+    setTimeout(() => { if (!mainRevealed) revealMain(); }, failSafeMs);
   } catch (e) {
     revealMain();
   }
