@@ -43,14 +43,19 @@ async function startEntryPlayback() {
   if (!videoUsable) { revealMain(); return; }
   if (playbackStarted) return;
   playbackStarted = true;
+
+  // Safety net: armed *before* awaiting play(), since that promise can hang
+  // indefinitely on iOS Safari (never resolve or reject) if it overlaps with
+  // another in-flight play() call. Without this guaranteed up front, a hang
+  // here would block the code below forever and leave the visitor stuck.
+  const failSafeMs = (isFinite(entryVideo.duration) ? entryVideo.duration * 1000 : 8000) + 4000;
+  setTimeout(() => { if (!mainRevealed) revealMain(); }, failSafeMs);
+
   try {
     entryVideo.currentTime = 0;
     entryVideo.muted = false;
     await entryVideo.play();
     try { await bgAudio.play(); audioPlaying = true; updateAudioIcon(); } catch (_) {}
-    // Safety net: if `ended` doesn't fire for any reason, don't leave the visitor stuck.
-    const failSafeMs = (isFinite(entryVideo.duration) ? entryVideo.duration * 1000 : 8000) + 4000;
-    setTimeout(() => { if (!mainRevealed) revealMain(); }, failSafeMs);
   } catch (e) {
     revealMain();
   }
@@ -61,12 +66,15 @@ entryVideo.addEventListener('error', () => {
   entryFallback.style.display = 'block';
 });
 entryVideo.addEventListener('loadedmetadata', () => {
+  // Once the user has tapped, real playback owns the video element --
+  // don't let this muted-preview logic touch play/mute/currentTime and
+  // risk colliding with it (a real source of iOS Safari play() hangs).
+  if (userTapped) return;
   entryVideo.muted = true;
   try { entryVideo.currentTime = 0.001; } catch (_) {}
   const p = entryVideo.play();
   if (p) p.then(() => {
     if (!userTapped) entryVideo.pause();
-    if (userTapped && !mainRevealed) startEntryPlayback();
   }).catch(() => {});
 });
 entryVideo.addEventListener('ended', revealMain);
