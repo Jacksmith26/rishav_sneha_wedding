@@ -18,11 +18,11 @@ throughout (entry gate, footer, page title).
 - `js/main.js` → `const WEDDING_DATE = new Date('2026-12-07T00:00:00')`
 
 **Ceremony itinerary / dates** — edit the `.event-block` sections inside
-`.events-section` in `index.html` (Mehandi Muse / Haldi & Marwa / The Golden
-Affair / Nach Le Tonight / The Celebration of Forever).
+`.events-section` in `index.html` (Tilak / Haldi & Marwa / The Golden
+Affair / Nach Le Tonight / The Celebration of Forever / Reception).
 
-**Venue details** — edit the three `.venue-card` blocks inside
-`.venue-section` in `index.html` (one per date: 5th/6th/7th December). Each
+**Venue details** — edit the four `.venue-card` blocks inside
+`.venue-section` in `index.html` (one per date: 5th/6th/7th/9th December). Each
 card has a name, address, a QR code image, and a "Get Directions" link. Both
 the QR code and the button point to the same Google Maps link — update the
 `href` on `.venue-directions-btn` and the `data=` parameter in the QR image
@@ -42,7 +42,7 @@ drop a real file in with the matching name (missing files fail silently via
 - `assets/images/HeroLight.png`, `assets/images/HeroDark.png` — full-screen hero photos for the day/night toggle.
 - `assets/images/SecondImage.png` — full-screen photo shown right after the hero as the user scrolls down.
 - `assets/video/moments.mp4` — vertical highlight reel.
-- `assets/video/event-mehandi.mp4`, `event-haldi.mp4`, `event-sangeet.mp4`, `event-wedding.mp4` — one looping clip per ceremony.
+- `assets/video/event-tilak.mp4`, `event-5-haldi.mp4`, `event-haldi.mp4`, `event-sangeet.mp4`, `event-wedding.mp4`, `event-reception.mp4` — one looping clip per ceremony.
 - `assets/images/note.png` — a heartfelt note/photo shown near the end, before the family blessings section.
 - `assets/audio/bg-music.mp3` — background track, toggled via the speaker button (use something you have the rights to use).
 
